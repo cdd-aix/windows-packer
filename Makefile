@@ -6,7 +6,7 @@ IMAGES += windows-2019
 # Revisit as a pattern
 windows-2019-amd64-virtualbox.ovf: windows-2019.json
 	rm -f "$@"
-	packer build --only=$(basename $@) --on-error=abort $<
+	packer build --only=$(basename $@) --on-error=abort --force --timestamp-ui $<
 
 %.json: %.yaml
 	yq read --tojson --prettyPrint --indent 4 $< > "$@"
