@@ -26,13 +26,15 @@ builders:
     iso_interface: sata
     hard_drive_nonrotational: true
     usb: true
-    # For timing for winrm only
-    skip_export: true
     # Trim seems like a good idea... slows down provision a LOT
     # hard_drive_discard: true
     # See https://www.packer.io/docs/builders/virtualbox/iso#export-configuration
     # output_directory and output_filename
     # vboxmanage is a mess, keep as last
+    format: ova
+    export_opts:
+      - --manifest
+      - --ovf20 # See vboxmanage export --help output
     vboxmanage:
       # No Legacy IDE
       - - storagectl
@@ -94,3 +96,25 @@ builders:
         - '{{.Name}}'
         - --draganddrop
         - bidirectional
+provisioners:
+  - type: powershell
+    script: '{{user `rgldir`}}/disable-windows-updates.ps1'
+  - type: powershell
+    inline: Uninstall-WindowsFeature Windows-Defender
+  - type: powershell # Disable if we're not using virtualbox shared folders
+    script: '{{user `rgldir`}}/virtualbox-prevent-vboxsrv-resolution-delay.ps1'
+  - type: windows-restart
+  - type: powershell # Guest additional provisioner
+    script: '{{user `rgldir`}}/provision.ps1'
+  - type: windows-update
+  - type: powershell # Enable remote desktop
+    script: '{{user `rgldir`}}/enable-remote-desktop.ps1'
+  - type: powershell # Enable ssh for rsync folders
+    script: '{{user `rgldir`}}/provision-openssh.ps1'
+  - type: windows-restart
+  - type: powershell # Cloudbase init which neesd some education
+    script: '{{user `rgldir`}}/provision-cloudbase-init.ps1'
+  - type: powershell # Eject everything
+    script: '{{user `rgldir`}}/eject-media.ps1'
+  - type: powershell
+    script: '{{user `rgldir`}}/optimize.ps1'
