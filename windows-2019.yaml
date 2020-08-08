@@ -24,7 +24,8 @@ builders:
     cpus: '{{user `cpus`}}'
     hard_drive_interface: sata
     iso_interface: sata
-    hard_drive_nonrotational: true
+    # We desire defrag for smaller image... and this breaks defrag
+    # hard_drive_nonrotational: true
     usb: true
     # Trim seems like a good idea... slows down provision a LOT
     # hard_drive_discard: true
@@ -105,8 +106,8 @@ provisioners:
     script: '{{user `rgldir`}}/virtualbox-prevent-vboxsrv-resolution-delay.ps1'
   - type: windows-restart
   - type: powershell # Guest additional provisioner
-    script: '{{user `rgldir`}}/provision.ps1'
-  - type: windows-update
+    script: 'provision.ps1'
+  # - type: windows-update # https://github.com/rgl/packer-provisioner-windows-update
   - type: powershell # Enable remote desktop
     script: '{{user `rgldir`}}/enable-remote-desktop.ps1'
   - type: powershell # Enable ssh for rsync folders
