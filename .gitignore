@@ -1,4 +1,5 @@
 *.json
-output-*/
+*.ova
 /packer_cache/
 /windows-vagrant/
+output-*/
