@@ -22,3 +22,23 @@ builders:
     winrm_timeout: 15m
     guest_additions_mode: attach
     cpus: '{{user `cpus`}}'
+    hard_drive_interface: sata
+    iso_interface: sata
+    vboxmanage:
+      - - storagectl
+        - '{{.Name}}'
+        - --name
+        - IDE Controller
+        - --remove
+      - - modifyvm
+        - '{{.Name}}'
+        - --graphicscontroller
+        - vmsvga
+      - - modifyvm
+        - '{{.Name}}'
+        - --vram
+        - "128"
+      - - modifyvm
+        - '{{.Name}}'
+        - --accelerate3d
+        - on
