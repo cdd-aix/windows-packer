@@ -1,9 +1,0 @@
-{
-    "builders": [
-	{
-	    "name": "windows-2019-amd64-virtualbox",
-	    "type": "virtualbox-iso"
-	}
-    ]
-
-}
