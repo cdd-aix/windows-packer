@@ -1,3 +1,4 @@
 *.json
 output-*/
 /packer_cache/
+/windows-vagrant/
