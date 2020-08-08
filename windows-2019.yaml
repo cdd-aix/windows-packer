@@ -9,10 +9,13 @@ builders:
     type: virtualbox-iso
     iso_url: '{{user `iso_url`}}'
     iso_checksum: '{{user `iso_checksum`}}'
-    ssh_username: vagrant
     memory: '{{user `memory`}}'
     guest_os_type: Windows2019_64
     shutdown_command: shutdown /s /t 0 /f /d p:4:1 /c "Packer Shutdown"
     floppy_files:
       - '{{user `rgldir`}}/windows-2019/autounattend.xml'
-      # - '{{user `rgldir`}}/winrm.ps1'
+      - '{{user `rgldir`}}/winrm.ps1'
+    communicator: winrm
+    winrm_username: vagrant
+    winrm_password: vagrant
+    winrm_timeout: 15m
