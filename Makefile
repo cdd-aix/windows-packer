@@ -2,11 +2,16 @@
 MAKEFLAGS += --no-buildin-rules
 MAKEFLAGS += --no-builtin-variables
 IMAGES += windows-2019
+# TODO: Examine the cleanup provisioner
+PACKER_ON_ERROR ?= cleanup
+# TODO: Explore force behavior
+# PACKER_BUILD_ARGS ?= --force
 
 # Revisit as a pattern
 windows-2019-amd64-virtualbox.ovf: windows-2019.json
-	rm -f "$@"
-	packer build --only=$(basename $@) --on-error=abort --force --timestamp-ui $<
+	packer validate $<
+	rm -vf $@
+	packer build --only=$(basename $@) --on-error=$(PACKER_ON_ERROR) $(PACKER_BUILD_ARGS) --timestamp-ui $<
 
 %.json: %.yaml
 	yq read --tojson --prettyPrint --indent 4 $< > "$@"
