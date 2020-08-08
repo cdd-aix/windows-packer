@@ -24,16 +24,32 @@ builders:
     cpus: '{{user `cpus`}}'
     hard_drive_interface: sata
     iso_interface: sata
+    hard_drive_nonrotational: true
+    usb: true
+    # For timing for winrm only
+    skip_export: true
+    # Trim seems like a good idea... slows down provision a LOT
+    # hard_drive_discard: true
+    # See https://www.packer.io/docs/builders/virtualbox/iso#export-configuration
+    # output_directory and output_filename
+    # vboxmanage is a mess, keep as last
     vboxmanage:
+      # No Legacy IDE
       - - storagectl
         - '{{.Name}}'
         - --name
         - IDE Controller
         - --remove
+      # No Virtualbox VRDE
+      - - modifyvm
+        - '{{.Name}}'
+        - --vrde
+        - off
+      # Use recommended virtualbox vidoe
       - - modifyvm
         - '{{.Name}}'
         - --graphicscontroller
-        - vmsvga
+        - vboxsvga
       - - modifyvm
         - '{{.Name}}'
         - --vram
@@ -42,3 +58,39 @@ builders:
         - '{{.Name}}'
         - --accelerate3d
         - on
+      # In case we need lots of nics
+      - - modifyvm
+        - '{{.Name}}'
+        - --chipset
+        - ich9
+      # In case we're using wsl2
+      - - modifyvm
+        - '{{.Name}}'
+        - --nested-hw-virt
+        - on
+      # Go with the newest NICs
+      - - modifyvm
+        - '{{.Name}}'
+        - --nictype1
+        - 82545EM
+      - - modifyvm
+        - '{{.Name}}'
+        - --nictype2
+        - 82545EM
+      - - modifyvm
+        - '{{.Name}}'
+        - --nictype2
+        - 82545EM
+      - - modifyvm
+        - '{{.Name}}'
+        - --nictype2
+        - 82545EM
+      # Yes, clipboard sharing
+      - - modifyvm
+        - '{{.Name}}'
+        - --clipboard-mode
+        - bidirectional
+      - - modifyvm
+        - '{{.Name}}'
+        - --draganddrop
+        - bidirectional
