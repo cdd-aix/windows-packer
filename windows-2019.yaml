@@ -8,3 +8,4 @@ builders:
     iso_url: '{{user `iso_url`}}'
     iso_checksum: '{{user `iso_checksum`}}'
     ssh_username: vagrant
+    memory: 4096
