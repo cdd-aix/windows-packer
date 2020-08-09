@@ -113,8 +113,8 @@ provisioners:
   - type: powershell # Enable ssh for rsync folders
     script: '{{user `rgldir`}}/provision-openssh.ps1'
   - type: windows-restart
-  - type: powershell # Cloudbase init which neesd some education
-    script: '{{user `rgldir`}}/provision-cloudbase-init.ps1'
+  # - type: powershell # Cloudbase init which neesd some education
+  #   script: '{{user `rgldir`}}/provision-cloudbase-init.ps1'
   - type: powershell # Eject everything
     script: '{{user `rgldir`}}/eject-media.ps1'
   - type: powershell
