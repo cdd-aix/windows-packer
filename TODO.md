@@ -1,7 +1,6 @@
 # TODO
 ## TODO
 
-* Make provisioning headless by default
 * Add diskset to mimic work
 * Explore vagrant box creation while preserving ova/ovf exports
 * Migrate to templates in Makefile
@@ -12,6 +11,7 @@
 
 ## Done
 
+* Make provisioning headless by default
 * Basic install chocolatey and git and nvm.portable
 * Disable cloudbase-init since not supported
 * Use YAML for config file templates and convert

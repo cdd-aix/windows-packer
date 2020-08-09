@@ -5,6 +5,7 @@ variables:
     memory: '8192'
     rgldir: '{{env `RGLDIR`}}'
     cpus: '4'
+    headless: 'true'
 builders:
   - name: windows-2019-amd64-virtualbox
     type: virtualbox-iso
@@ -13,6 +14,7 @@ builders:
     memory: '{{user `memory`}}'
     guest_os_type: Windows2019_64
     shutdown_command: shutdown /s /t 0 /f /d p:4:1 /c "Packer Shutdown"
+    headless: '{{user `headless`}}'
     floppy_files:
       - '{{user `rgldir`}}/windows-2019/autounattend.xml'
       - '{{user `rgldir`}}/winrm.ps1'
