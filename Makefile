@@ -10,6 +10,14 @@ export RGLDIR = windows-vagrant
 RGLURL = https://github.com/rgl/windows-vagrant.git
 
 # Revisit as a pattern
+windows-2019-nvm-amd64-virtualbox.ova: windows-2019-nvm.json
+	packer validate $<
+	rm -vf "$@"
+	packer build --only=$(basename $@) --on-error=$(PACKER_ON_ERROR) $(PACKER_BUILD_ARGS) --timestamp-ui $<
+	mv -v output-$(basename $@)/packer-$(basename $@)-*.ova $@
+	rmdir -v output-$(basename $@)
+
+# Perhaps an iso and an ovf stem and _ to separate stem from name
 windows-2019-amd64-virtualbox.ova: windows-2019.json $(RGLDIR)/windows-2019/autounattend.xml
 	packer validate $<
 	rm -vf $@

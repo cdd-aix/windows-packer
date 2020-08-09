@@ -1,0 +1,21 @@
+---
+variables:
+builders:
+  - name: windows-2019-nvm-amd64-virtualbox
+    type: virtualbox-ovf
+    source_path: windows-2019-amd64-virtualbox.ova
+    # checksum: sha256:68ef706501fffe4a07bdeb5fb18072c77b57ec1ae7312e4dc7d816ed2e9f10fa
+    checksum: none
+    guest_additions_mode: disable
+    communicator: winrm
+    winrm_username: vagrant
+    winrm_password: vagrant
+    shutdown_command: shutdown /s /t 0 /f /d p:4:1 /c "Packer Shutdown"
+    format: ova
+    export_opts:
+      - --manifest
+      - --ovf20
+provisioners:
+  - type: powershell
+    inline: |
+      Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
