@@ -1,6 +1,7 @@
 # TODO
 ## TODO
 
+* Do VS 2017 real quick
 * Add diskset to mimic work
 * Explore vagrant box creation while preserving ova/ovf exports
 * Migrate to templates in Makefile
