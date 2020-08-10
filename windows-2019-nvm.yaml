@@ -23,7 +23,9 @@ provisioners:
     inline: |
       Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
   - type: powershell
-    inline: 'choco feature disable --name showDownloadProgress; choco install -y git.install make nvm.portable wget zip'
+    inline: 'choco feature disable --name showDownloadProgress; choco install -y git.install --params "/GitAndUnixToolsOnPath"'
+  - type: powershell
+    inline: 'choco install -y make nvm.portable wget zip'
   - type: windows-restart
   - type: powershell
     environment_vars: "NODEJS_VERSION={{user `nodejs_version`}}"
