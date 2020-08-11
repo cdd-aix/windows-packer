@@ -20,9 +20,14 @@ builders:
       - --ovf20
 provisioners:
   - type: powershell
-    inline: '$ErrorActionPreference = "Stop"; $pieces=@("IIS-ApplicationDevelopment", "IIS-ASPNET45", "IIS-WebSockets"); $pieces.ForEach({Enable-WindowsOptionalFeature -Online -Featurename $_ -All}); iisreset'
-  - type: powershell
-    inline: 'choco install -y dotnetfx'
+    inline:
+      - '$ErrorActionPreference = "Stop"; $pieces=@("IIS-ApplicationDevelopment", "IIS-ASPNET45", "IIS-WebSockets"); $pieces.ForEach({Enable-WindowsOptionalFeature -Online -Featurename $_ -All}); iisreset'
+        # vcredist should be in nvm package instead
+      - 'choco install -y vcredist2013'
+      - 'choco install -y vcredist2015'
+      - 'choco install -y vcredist2017'
+      - 'choco install -y wixtoolset'
+      - 'choco install -y dotnetfx'
     valid_exit_codes:
       - 0
       - 3010
@@ -32,7 +37,9 @@ provisioners:
 #   - type: powershell
 #     inline: 'Get-Windows'
   - type: powershell
-    inline: 'choco install -y visualstudio2017community'
+    inline:
+      - 'choco install -y visualstudio2017community'
+      - 'choco install -y visualstudio2017-workload-manageddesktop'
     valid_exit_codes:
       - 0
       - 3010
