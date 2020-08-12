@@ -9,6 +9,15 @@ PACKER_ON_ERROR ?= cleanup
 export RGLDIR = windows-vagrant
 RGLURL = https://github.com/rgl/windows-vagrant.git
 
+
+# This enables the template rule have all targets here
+# windows-10-amd64-virtualbox.ova: %-virtualbox.ova: # output-%-virtualbox/packer-%.ova
+# 	echo @ $@ f $^
+
+windows-%-virtualbox.ova: windows.json
+	echo $@, $^, $(pattern), $*
+	packer validate $<
+
 # Revisit as a pattern
 windows-2019-nvm-amd64-virtualbox.ova: windows-2019-nvm.json windows-2019-amd64-virtualbox.ova
 	packer validate $<
