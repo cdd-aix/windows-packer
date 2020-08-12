@@ -1,0 +1,11 @@
+---
+variables:
+    iso_url: '{{env `ISO_URL`}}'
+    iso_checksum: '{{env `ISO_CHECKSUM`}}'
+builders:
+  - name:
+    type: virtualbox-iso
+    iso_url: '{{user `iso_url`}}'
+    iso_checksum: '{{user `iso_checksum`}}'
+    communicator: winrm
+    winrm_username: vagrant

@@ -14,9 +14,17 @@ RGLURL = https://github.com/rgl/windows-vagrant.git
 # windows-10-amd64-virtualbox.ova: %-virtualbox.ova: # output-%-virtualbox/packer-%.ova
 # 	echo @ $@ f $^
 
-windows-%-virtualbox.ova: windows.json
-	echo $@, $^, $(pattern), $*
+
+windows-%.ova: export PACKER_TEMPLATE = windows.json
+windows-2019-%.ova: export ISO_URL = https://software-download.microsoft.com/download/pr/17763.737.190906-2324.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us_1.iso
+%.ova: export ISO_CHECKSUM ?= none
+%.ova:
+	$(MAKE) runpacker
+
+runpacker: $(PACKER_TEMPLATE)
 	packer validate $<
+
+.PHONY: runpacker
 
 # Revisit as a pattern
 windows-2019-nvm-amd64-virtualbox.ova: windows-2019-nvm.json windows-2019-amd64-virtualbox.ova
