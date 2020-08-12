@@ -23,6 +23,7 @@ windows-2019-%.ova: export ISO_URL = https://software-download.microsoft.com/dow
 
 runpacker: $(PACKER_TEMPLATE)
 	packer validate $<
+	packer build --force $<
 
 .PHONY: runpacker
 
