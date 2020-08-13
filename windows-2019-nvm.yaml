@@ -20,14 +20,24 @@ builders:
       - --ovf20
 provisioners:
   - type: powershell
-    inline: |
-      Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    inline:
+      - Set-ExecutionPolicy Bypass -Scope Process -Force
+      - "[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+      - choco feature disable --name showDownloadProgress
   - type: powershell
     inline:
-      - 'choco feature disable --name showDownloadProgress'
+      - $ErrorActionPreference = "Stop"
+      - $pieces=@('IIS-Applicationdevelopment', 'IIS-ASPNET45', 'IIS-WebSockets')
+      - $pieces.ForEach({Write-Output $_; Enable-WindowsOptionalFeature -Online -All -Featurename $_})
+      - iisreset
+  - type: powershell
+    inline:
       - 'choco install -y git.install --params "/GitAndUnixToolsOnPath"'
   - type: powershell
-    inline: 'choco install -y make nvm.portable wget zip'
+    inline: choco install -y dotnet4.6.1 dotnetfx googlechrome make microsoft-edge nvm.portable sysinternals wget zip
+    valid_exit_codes:
+      - 0
+      - 3010
   - type: windows-restart
   - type: powershell
     environment_vars: "NODEJS_VERSION={{user `nodejs_version`}}"
