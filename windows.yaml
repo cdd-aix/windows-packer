@@ -17,6 +17,11 @@ builders:
     memory: '{{user `memory`}}'
     vboxmanage:
       - [ storagectl, '{{.Name}}', --name, IDE Controller, --remove ]
+      # # - [ storagectl, '{{.Name}}', --name, SCSI Controller, --controller, VirtIO ]
+      # - [ storagectl, '{{.Name}}', --name, SCSI Controller, --add, scsi ]
+      # # - [ storagectl, '{{.Name}}', --add, scsi, --name, BusLogic SCSI Controller, --controller, BusLogic ]
+      # - [ storagectl, '{{.Name}}', --name, SAS Controller, --add, sas ]
+      - [ storagectl, '{{.Name}}', --name, VirtIO Controller, --add, virtio ]
       - [ modifyvm, '{{.Name}}', --vrde, off ]
       - [ modifyvm, '{{.Name}}', --graphicscontroller, vmsvga ]
       - [ modifyvm, '{{.Name}}', --vram, 128 ]

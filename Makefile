@@ -17,7 +17,7 @@ RGLURL = https://github.com/rgl/windows-vagrant.git
 # Rough naming conventon
 # windows-version-type[-layer].ova
 windows-2019-%.ova: export ISO_URL = https://software-download.microsoft.com/download/pr/17763.737.190906-2324.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us_1.iso
-windows-2019-%.ova: export UNATTENDED = $(RGLDIR)/windows-2019/autounattend.xml
+windows-2019-%.ova: export UNATTENDED = $(RGLDIR)/tmp/windows-2019-vsphere/autounattend.xml
 windows-%.ova: export PACKER_TEMPLATE = windows.json
 %.ova: export ISO_CHECKSUM ?= none
 %.ova: export MEMORY ?= 8192
@@ -54,6 +54,8 @@ windows-2019-amd64-virtualbox.ova: windows-2019.json $(RGLDIR)/windows-2019/auto
 %.json: %.yaml
 	yq read --tojson --prettyPrint --indent 4 $< > "$@"
 
+$(RGLDIR)/tmp/%-vsphere/autounattend.xml: $(RGLDIR)/%/autounattend.xml
+	make -C $(RGLDIR) tmp/$*-vsphere/autounattend.xml
 
 $(RGLDIR)/%: $(RGLDIR)
 	test -r "$@"
