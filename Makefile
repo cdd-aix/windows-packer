@@ -14,15 +14,22 @@ RGLURL = https://github.com/rgl/windows-vagrant.git
 # windows-10-amd64-virtualbox.ova: %-virtualbox.ova: # output-%-virtualbox/packer-%.ova
 # 	echo @ $@ f $^
 
-
+# Rough naming conventon
+# windows-version-type[-layer].ova
 windows-2019-%.ova: export ISO_URL = https://software-download.microsoft.com/download/pr/17763.737.190906-2324.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us_1.iso
+windows-2019-%.ova: export UNATTENDED = $(RGLDIR)/windows-2019/autounattend.xml
 windows-%.ova: export PACKER_TEMPLATE = windows.json
 %.ova: export ISO_CHECKSUM ?= none
 %.ova: export MEMORY ?= 8192
+%.ova: export GUEST_OS_TYPE ?= Windows2019_64
+%.ova: export SETUPWINRM ?= $(RGLDIR)/winrm.ps1
 %.ova:
+	@echo $@, $^
 	$(MAKE) runpacker
 
-runpacker: $(PACKER_TEMPLATE)
+runpacker: $(PACKER_TEMPLATE) $(SETUPWINRM) $(UNATTENDED)
+	@echo $@, $^
+	echo $(RGLDIR) $(SETUPWINRM) $(UNATTENDED)
 	packer validate $<
 	packer build --force $<
 
@@ -48,7 +55,10 @@ windows-2019-amd64-virtualbox.ova: windows-2019.json $(RGLDIR)/windows-2019/auto
 	yq read --tojson --prettyPrint --indent 4 $< > "$@"
 
 
-$(RGLDIR)/%:
+$(RGLDIR)/%: $(RGLDIR)
+	test -r "$@"
+
+$(RGLDIR):
 	git clone $(RGLURL) $(RGLDIR)
 
 

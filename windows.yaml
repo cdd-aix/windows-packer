@@ -3,6 +3,9 @@ variables:
     iso_url: '{{env `ISO_URL`}}'
     iso_checksum: '{{env `ISO_CHECKSUM`}}'
     memory: '{{env `MEMORY`}}'
+    guest_os_type: '{{env `GUEST_OS_TYPE`}}'
+    unattended: '{{env `UNATTENDED`}}'
+    setupwinrm: '{{env `SETUPWINRM`}}'
 builders:
   - name:
     type: virtualbox-iso
@@ -10,4 +13,11 @@ builders:
     iso_checksum: '{{user `iso_checksum`}}'
     communicator: winrm
     winrm_username: vagrant
+    winrm_password: vagrant
+    winrm_timeout: 15m
     memory: '{{user `memory`}}'
+    guest_os_type: '{{user `guest_os_type`}}'
+    floppy_files:
+      - '{{user `unattended`}}'
+      - '{{user `setupwinrm`}}'
+    shutdown_command: shutdown /s /t 0 /f /d p:4:1 /c "Packer Shutdown"
