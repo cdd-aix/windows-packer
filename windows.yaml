@@ -6,6 +6,7 @@ variables:
     guest_os_type: '{{env `GUEST_OS_TYPE`}}'
     unattended: '{{env `UNATTENDED`}}'
     setupwinrm: '{{env `SETUPWINRM`}}'
+    rgldir: '{{env `RGLDIR`}}'
 builders:
   - name:
     type: virtualbox-iso
@@ -21,11 +22,10 @@ builders:
       # - [ storagectl, '{{.Name}}', --name, SCSI Controller, --add, scsi ]
       # # - [ storagectl, '{{.Name}}', --add, scsi, --name, BusLogic SCSI Controller, --controller, BusLogic ]
       # - [ storagectl, '{{.Name}}', --name, SAS Controller, --add, sas ]
-      - [ storagectl, '{{.Name}}', --name, VirtIO Controller, --add, virtio ]
+      # - [ storagectl, '{{.Name}}', --name, VirtIO Controller, --add, virtio ]
       - [ modifyvm, '{{.Name}}', --vrde, off ]
-      - [ modifyvm, '{{.Name}}', --graphicscontroller, vmsvga ]
+      - [ modifyvm, '{{.Name}}', --graphicscontroller, vboxsvga ] # this or vboxvga vmsvga breaks guest additions install
       - [ modifyvm, '{{.Name}}', --vram, 128 ]
-      - [ modifyvm, '{{.Name}}', --usb, on ]
       - [ modifyvm, '{{.Name}}', --chipset, ich9 ]
       - [ modifyvm, '{{.Name}}', --nested-hw-virt, on ]
       - [ modifyvm, '{{.Name}}', --clipboard-mode, bidirectional ]
@@ -47,3 +47,29 @@ builders:
     floppy_files:
       - '{{user `unattended`}}'
       - '{{user `setupwinrm`}}'
+    format: ova
+    export_opts: [ --manifest, --ovf20 ]
+    usb: true
+
+provisioners:
+  - type: powershell
+    script: '{{user `rgldir`}}/disable-windows-updates.ps1'
+  - type: powershell
+    inline: Uninstall-WindowsFeature Windows-Defender
+  - type: powershell # Disable if we're not using virtualbox shared folders
+    script: '{{user `rgldir`}}/virtualbox-prevent-vboxsrv-resolution-delay.ps1'
+  - type: windows-restart
+  - type: powershell # Guest additional provisioner
+    script: 'provision.ps1'
+  - type: windows-update # https://github.com/rgl/packer-provisioner-windows-update
+  - type: powershell # Enable remote desktop
+    script: '{{user `rgldir`}}/enable-remote-desktop.ps1'
+  - type: powershell # Enable ssh for rsync folders
+    script: '{{user `rgldir`}}/provision-openssh.ps1'
+  - type: windows-restart
+  # - type: powershell # Cloudbase init which neesd some education
+  #   script: '{{user `rgldir`}}/provision-cloudbase-init.ps1'
+  - type: powershell # Eject everything
+    script: '{{user `rgldir`}}/eject-media.ps1'
+  - type: powershell
+    script: '{{user `rgldir`}}/optimize.ps1'
