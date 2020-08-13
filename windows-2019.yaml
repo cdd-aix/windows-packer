@@ -6,12 +6,14 @@ variables:
     rgldir: '{{env `RGLDIR`}}'
     cpus: '4'
     headless: 'true'
+    disk_size: '131072'
 builders:
   - name: windows-2019-amd64-virtualbox
     type: virtualbox-iso
     iso_url: '{{user `iso_url`}}'
     iso_checksum: '{{user `iso_checksum`}}'
     memory: '{{user `memory`}}'
+    disk_size: '{{user `disk_size`}}'
     guest_os_type: Windows2019_64
     shutdown_command: shutdown /s /t 0 /f /d p:4:1 /c "Packer Shutdown"
     headless: '{{user `headless`}}'
@@ -109,7 +111,7 @@ provisioners:
   - type: windows-restart
   - type: powershell # Guest additional provisioner
     script: 'provision.ps1'
-  # - type: windows-update # https://github.com/rgl/packer-provisioner-windows-update
+  - type: windows-update # https://github.com/rgl/packer-provisioner-windows-update
   - type: powershell # Enable remote desktop
     script: '{{user `rgldir`}}/enable-remote-desktop.ps1'
   - type: powershell # Enable ssh for rsync folders
@@ -119,5 +121,5 @@ provisioners:
   #   script: '{{user `rgldir`}}/provision-cloudbase-init.ps1'
   - type: powershell # Eject everything
     script: '{{user `rgldir`}}/eject-media.ps1'
-  - type: powershell
-    script: '{{user `rgldir`}}/optimize.ps1'
+  # - type: powershell
+  #   script: '{{user `rgldir`}}/optimize.ps1'
