@@ -10,13 +10,20 @@ export RGLDIR = windows-vagrant
 RGLURL = https://github.com/rgl/windows-vagrant.git
 
 
-windows-2019-vs2017-amd64-virtualbox.ova: windows-2019-vs2017.json windows-2019-nvm-amd64-virtualbox.ova
+windows-2019-vs2015-amd64-virtualbox.ova: windows-2019-vs2015.json windows-2019-nvm-amd64-virtualbox.ova
 	packer validate $<
 	rm -rvf output-$(basename $@)
 	rm -vf "$@"
 	packer build --only=$(basename $@) --on-error=$(PACKER_ON_ERROR) $(PACKER_BUILD_ARGS) --timestamp-ui $<
 	mv -v output-$(basename $@)/packer-$(basename $@)-*.ova $@
 	rmdir -v output-$(basename $@)
+# windows-2019-vs2017-amd64-virtualbox.ova: windows-2019-vs2017.json windows-2019-nvm-amd64-virtualbox.ova
+# 	packer validate $<
+# 	rm -rvf output-$(basename $@)
+# 	rm -vf "$@"
+# 	packer build --only=$(basename $@) --on-error=$(PACKER_ON_ERROR) $(PACKER_BUILD_ARGS) --timestamp-ui $<
+# 	mv -v output-$(basename $@)/packer-$(basename $@)-*.ova $@
+# 	rmdir -v output-$(basename $@)
 # Revisit as a pattern
 windows-2019-nvm-amd64-virtualbox.ova: windows-2019-nvm.json windows-2019-amd64-virtualbox.ova
 	packer validate $<

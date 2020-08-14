@@ -1,0 +1,48 @@
+---
+variables:
+  nodejs_version: 12.18.3
+  headless: 'true'
+builders:
+  - name: windows-2019-vs2015-amd64-virtualbox
+    type: virtualbox-ovf
+    source_path: windows-2019-nvm-amd64-virtualbox.ova
+    # checksum: sha256:68ef706501fffe4a07bdeb5fb18072c77b57ec1ae7312e4dc7d816ed2e9f10fa
+    checksum: none
+    guest_additions_mode: disable
+    communicator: winrm
+    winrm_username: vagrant
+    winrm_password: vagrant
+    shutdown_command: shutdown /s /t 0 /f /d p:4:1 /c "Packer Shutdown"
+    # headless: '{{user `headless`}}'
+    format: ova
+    export_opts:
+      - --manifest
+      - --ovf20
+provisioners:
+  - type: powershell
+    inline: Install-WindowsFeature Net-Framework-Core
+  - type: powershell
+    inline: choco install -y dotnet3.5
+  - type: powershell
+    inline: psexec64 -accepteula -i choco install -y visualstudiocommunity2013
+    valid_exit_codes: [ 0, 3010 ]
+  - type: windows-restart
+  - type: powershell
+    inline: choco install --execution-timeout 5400 -y visualstudio2015community
+    valid_exit_codes: [ 0, 1, 3010 ]
+  - type: windows-restart
+  - type: powershell
+    inline: choco install -y visualstudio2015community
+    valid_exit_codes: [ 0, 3010 ]
+  - type: windows-restart
+  - type: powershell
+    inline: choco install -y visualstudio2017community visualstudio2017-workload-manageddesktop
+    valid_exit_codes: [ 0, 3010 ]
+  - type: windows-restart
+  - type: powershell
+    inline: choco install -y visualstudio2019community visualstudio2019-workload-manageddesktop
+    valid_exit_codes: [ 0, 3010 ]
+  - type: windows-restart
+  - type: powershell
+    inline: psexec64  -accepeula -i choco install -y wixtoolset
+    valid_exit_codes: [ 0, 3010 ]
